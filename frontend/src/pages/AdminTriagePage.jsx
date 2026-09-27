@@ -7,6 +7,7 @@ import { STATUS_STYLES, PRIORITY_STYLES, STATUSES, PRIORITIES, CATEGORIES, CATEG
 export default function AdminTriagePage() {
   const [issues, setIssues] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [status, setStatus] = useState('')
   const [priority, setPriority] = useState('')
   const [category, setCategory] = useState('')
@@ -18,17 +19,23 @@ export default function AdminTriagePage() {
     if (category) params.category = category
 
     setLoading(true)
+    setError(false)
     client
       .get('/api/issues', { params: { ...params, size: 50 } })
       .then((res) => setIssues(res.data.content))
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
   }
 
   useEffect(load, [status, priority, category])
 
   const updateField = async (id, field, value) => {
-    await client.patch(`/api/issues/${id}/status`, { [field]: value })
-    load()
+    try {
+      await client.patch(`/api/issues/${id}/status`, { [field]: value })
+      load()
+    } catch {
+      window.alert('Could not update the issue. Check your connection and try again.')
+    }
   }
 
   return (
@@ -52,6 +59,8 @@ export default function AdminTriagePage() {
 
       {loading ? (
         <p className="text-slate-500 text-sm">Loading…</p>
+      ) : error ? (
+        <p className="text-red-600 text-sm">Could not load issues. Check your connection and try again.</p>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[720px]">

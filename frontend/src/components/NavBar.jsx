@@ -11,12 +11,12 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between">
+    <nav className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-y-2">
       <Link to="/" className="text-lg font-semibold text-slate-900">
         CivicTrack
       </Link>
 
-      <div className="flex items-center gap-3 sm:gap-5 text-sm">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-5 text-sm">
         {user && (
           <>
             <Link to="/" className="text-slate-600 hover:text-slate-900">Feed</Link>

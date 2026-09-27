@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class IssueController {
                                      @RequestParam(required = false) IssuePriority priority,
                                      @RequestParam(required = false) String keyword,
                                      @RequestParam(required = false, name = "mine") Boolean mineOnly,
-                                     @PageableDefault(size = 20) Pageable pageable) {
+                                     @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Long reporterFilter = Boolean.TRUE.equals(mineOnly) ? currentUser.id() : null;
         return issueService.listIssues(category, status, priority, keyword, reporterFilter, currentUser.id(), pageable);
     }

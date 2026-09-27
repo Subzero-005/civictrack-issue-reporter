@@ -17,19 +17,31 @@ export default function IssueDetailPage() {
 
   const load = () => {
     setLoading(true)
-    client.get(`/api/issues/${id}`).then((res) => setIssue(res.data)).finally(() => setLoading(false))
+    client
+      .get(`/api/issues/${id}`)
+      .then((res) => setIssue(res.data))
+      .catch(() => setIssue(null))
+      .finally(() => setLoading(false))
   }
 
   useEffect(load, [id])
 
   const handleUpvote = async () => {
-    const { data } = await client.post(`/api/issues/${id}/upvote`)
-    setIssue(data)
+    try {
+      const { data } = await client.post(`/api/issues/${id}/upvote`)
+      setIssue(data)
+    } catch {
+      window.alert('Could not update your upvote. Check your connection and try again.')
+    }
   }
 
   const handleStatusChange = async (field, value) => {
-    const { data } = await client.patch(`/api/issues/${id}/status`, { [field]: value })
-    setIssue(data)
+    try {
+      const { data } = await client.patch(`/api/issues/${id}/status`, { [field]: value })
+      setIssue(data)
+    } catch {
+      window.alert('Could not update the issue. Check your connection and try again.')
+    }
   }
 
   const handleAddNote = async (e) => {
@@ -40,6 +52,8 @@ export default function IssueDetailPage() {
       const { data } = await client.post(`/api/issues/${id}/remarks`, { note })
       setIssue(data)
       setNote('')
+    } catch {
+      window.alert('Could not add the remark. Check your connection and try again.')
     } finally {
       setSavingNote(false)
     }

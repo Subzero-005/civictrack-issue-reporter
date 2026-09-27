@@ -108,7 +108,17 @@ export default function ReportIssuePage() {
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null
+              if (file && file.size > 15 * 1024 * 1024) {
+                setError('That photo is too large. Please use an image under 15MB.')
+                e.target.value = ''
+                setPhoto(null)
+                return
+              }
+              setError('')
+              setPhoto(file)
+            }}
             className="w-full text-sm"
           />
         </div>

@@ -5,11 +5,13 @@ import IssueCard from '../components/IssueCard'
 export default function MyReportsPage() {
   const [issues, setIssues] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     client
       .get('/api/issues', { params: { mine: true } })
       .then((res) => setIssues(res.data.content))
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -19,6 +21,8 @@ export default function MyReportsPage() {
 
       {loading ? (
         <p className="text-slate-500 text-sm">Loading…</p>
+      ) : error ? (
+        <p className="text-red-600 text-sm">Could not load your reports. Check your connection and try again.</p>
       ) : issues.length === 0 ? (
         <p className="text-slate-500 text-sm">You haven't reported any issues yet.</p>
       ) : (

@@ -7,6 +7,7 @@ import { CATEGORIES, STATUSES, CATEGORY_LABELS, formatLabel } from '../constants
 export default function FeedPage() {
   const [issues, setIssues] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [view, setView] = useState('list')
   const [category, setCategory] = useState('')
   const [status, setStatus] = useState('')
@@ -19,9 +20,11 @@ export default function FeedPage() {
     if (keyword) params.keyword = keyword
 
     setLoading(true)
+    setError(false)
     client
       .get('/api/issues', { params })
       .then((res) => setIssues(res.data.content))
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [category, status, keyword])
 
@@ -76,6 +79,8 @@ export default function FeedPage() {
 
       {loading ? (
         <p className="text-slate-500 text-sm">Loading issues…</p>
+      ) : error ? (
+        <p className="text-red-600 text-sm">Could not load issues. Check your connection and try again.</p>
       ) : issues.length === 0 ? (
         <p className="text-slate-500 text-sm">No issues match these filters yet.</p>
       ) : view === 'list' ? (

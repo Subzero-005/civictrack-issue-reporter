@@ -39,11 +39,22 @@ function toChartData(map, colorMap) {
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState(null)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    client.get('/api/dashboard/stats').then((res) => setStats(res.data))
+    client
+      .get('/api/dashboard/stats')
+      .then((res) => setStats(res.data))
+      .catch(() => setError(true))
   }, [])
 
+  if (error) {
+    return (
+      <p className="text-center text-red-600 py-10">
+        Could not load dashboard stats. Check that the backend is reachable and try refreshing.
+      </p>
+    )
+  }
   if (!stats) return <p className="text-center text-slate-500 py-10">Loading dashboard…</p>
 
   const categoryData = toChartData(stats.byCategory)
